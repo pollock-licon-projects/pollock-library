@@ -32,7 +32,7 @@ def get_books():
     # 1. ファイルが存在するかチェック
     if not CSV_PATH.exists():
         raise HTTPException(
-            status_code=444,
+            status_code=404,
             detail=f"CSVファイルが見つかりません: {CSV_PATH.name}",
         )
 
@@ -47,7 +47,7 @@ def get_books():
                         "id": row.get("id", ""),
                         "title": row.get("title", ""),
                         "pdfURL": row.get("pdf_url") or row.get("pdfURL", ""),
-                        "thumnailURL": row.get("thumbnail_url")
+                        "thumbnailURL ": row.get("thumbnail_url")
                         or row.get("thumnailURL", ""),
                         "category": row.get("category", ""),
                         "uploadedAt": row.get("uploaded_at")
