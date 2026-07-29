@@ -69,13 +69,6 @@ def get_books():
 
 
 
-
-
-
-
-
-
-
 # パラメータを受け取るGETリクエスト
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: str = None):
