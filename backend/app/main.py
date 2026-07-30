@@ -2,6 +2,7 @@ import csv
 from pydantic import BaseModel
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 
 
 # FastAPIのインスタンス作成
@@ -24,57 +25,78 @@ def health_check():
     return {"status": "ok"}
 # --------------------------------------------
 
-# スクリプトと同じフォルダにある "books.csv" を参照
-CSV_PATH = Path(__file__).resolve().parent / "books.csv"
+BASE_DIR = Path(__file__).resolve().parent
+CSV_PATH = BASE_DIR / "books.csv"
+DATA_DIR = BASE_DIR / "Data"
+
+app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
+
+
+
 
 @app.get("/api/books")
 def get_books():
-    # 1. ファイルが存在するかチェック
     if not CSV_PATH.exists():
         raise HTTPException(
             status_code=404,
             detail=f"CSVファイルが見つかりません: {CSV_PATH.name}",
         )
 
-    books = []
+    if not DATA_DIR.is_dir():
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": "Data ディレクトリが見つかりません",
+                "expected_path": str(DATA_DIR),
+            },
+        )
+
     try:
-        # ExcelのBOM付きUTF-8にも対応できる 'utf-8-sig' を使用
         with open(CSV_PATH, mode="r", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
+            books = []
+
             for row in reader:
+                raw_id = row.get("id", "0")
+                book_id = str(int(raw_id)).zfill(3) if raw_id and raw_id.isdigit() else "000"
+                pdf_url = f"/data/{book_id}.pdf"
+                thumbnail_url = f"/data/{book_id}.jpg"
+
                 books.append(
                     {
-                        "id": row.get("id", ""),
+                        "id": book_id,
                         "title": row.get("title", ""),
-                        "pdfURL": row.get("pdf_url") or row.get("pdfURL", ""),
-                        "thumbnailURL ": row.get("thumbnail_url")
-                        or row.get("thumnailURL", ""),
+                        "pdfURL": pdf_url,
+                        "thumbnailURL": thumbnail_url,
                         "category": row.get("category", ""),
-                        "uploadedAt": row.get("uploaded_at")
-                        or row.get("uploadedAt", ""),
+                        "uploadedAt": row.get("uploaded_at"),
                     }
                 )
+
         return books
 
     except KeyError as e:
-        # ヘッダー名が不一致の場合
         raise HTTPException(
-            status_code=500, detail=f"CSVのカラム名が見つかりません: {e}"
+            status_code=500,
+            detail=f"CSVのカラム名が見つかりません: {e}",
         )
     except Exception as e:
-        # その他のエラーをキャッチしてメッセージを返す
         raise HTTPException(
-            status_code=500, detail=f"エラーが発生しました: {str(e)}"
+            status_code=500,
+            detail=f"エラーが発生しました: {str(e)}",
         )
 
 
 
-# パラメータを受け取るGETリクエスト
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
 
-# リクエストボディを受け取るPOSTリクエスト
+
+# リクエストボディを受け取るPOSTリクエスト　未実装
 @app.post("/api/upload")
 def create_item(item: Item):
     return {"message": "アイテムを作成しました", "item": item}
+
+
+# 削除を受け取るPOSTリクエスト　未実装
+@app.post("/api/delete")
+def delete_item(item: Item):
+    return {"message": "アイテムを削除しました", "item": item}
