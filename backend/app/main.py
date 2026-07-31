@@ -9,6 +9,10 @@ from pydantic import BaseModel
 # FastAPIのインスタンス作成
 app = FastAPI()
 
+# URLの「/app/app/Data」を、実際のフォルダ「app/Data」に結び付ける設定
+app.mount("/app/app/Data", StaticFiles(directory="app/Data"), name="data")
+
+
 # データの型定義 (Pydanticモデル)
 class Item(BaseModel):
     name: str
@@ -62,19 +66,19 @@ def get_books(request: Request):  #  Request を受け取る
             },
         )
 
-    # ベースURLを取得 (例: "http://localhost:8000" や "https://api.yourdomain.com")
-    base_url = str(request.base_url).rstrip("/")
-
     try:
         with open(CSV_PATH, mode="r", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             books = []
 
+            # DATA_DIR のパス文字列から先頭のスラッシュを除去（または DATA_DIR.name 等を使用）
+            dir_path = str(DATA_DIR).lstrip("/")
+
             for row in reader:
                 raw_id = row.get("id", "0")
                 book_id = str(int(raw_id)).zfill(3) if raw_id and raw_id.isdigit() else "000"
-                pdf_url = f"{base_url}/{DATA_DIR}/{book_id}.pdf"
-                thumbnail_url = f"{base_url}/{DATA_DIR}/{book_id}.jpg"
+                pdf_url = f"{base_url}/{dir_path}/{book_id}.pdf"
+                thumbnail_url = f"{base_url}/{dir_path}/{book_id}.jpg"
 
                 books.append(
                     {
