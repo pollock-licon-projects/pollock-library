@@ -1,8 +1,9 @@
-import csv
-from pydantic import BaseModel
 from pathlib import Path
-from fastapi import FastAPI, HTTPException
+import csv
+from typing import List
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 
 # FastAPIのインスタンス作成
@@ -32,10 +33,20 @@ DATA_DIR = BASE_DIR / "Data"
 app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
 
 
+class Book(BaseModel):
+    id: str
+    title: str
+    pdfURL: str
+    thumbnailURL: str
+    category: str
+    uploadedAt: str | None = None
 
 
-@app.get("/api/books")
-def get_books():
+@app.get("/api/books", response_model=List[Book])
+def get_books(request: Request):  #  Request を受け取る
+    #  ベースURLを取得 (例: "http://localhost:8000" や "https://api.yourdomain.com")
+    base_url = str(request.base_url).rstrip("/")
+
     if not CSV_PATH.exists():
         raise HTTPException(
             status_code=404,
@@ -51,6 +62,9 @@ def get_books():
             },
         )
 
+    # ベースURLを取得 (例: "http://localhost:8000" や "https://api.yourdomain.com")
+    base_url = str(request.base_url).rstrip("/")
+
     try:
         with open(CSV_PATH, mode="r", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
@@ -59,8 +73,8 @@ def get_books():
             for row in reader:
                 raw_id = row.get("id", "0")
                 book_id = str(int(raw_id)).zfill(3) if raw_id and raw_id.isdigit() else "000"
-                pdf_url = f"/data/{book_id}.pdf"
-                thumbnail_url = f"/data/{book_id}.jpg"
+                pdf_url = f"{base_url}/{DATA_DIR}/{book_id}.pdf"
+                thumbnail_url = f"{base_url}/{DATA_DIR}/{book_id}.jpg"
 
                 books.append(
                     {
@@ -88,7 +102,7 @@ def get_books():
 
 
 
-
+# --------------------------------------------
 
 # リクエストボディを受け取るPOSTリクエスト　未実装
 @app.post("/api/upload")
