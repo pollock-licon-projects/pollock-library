@@ -40,8 +40,8 @@ app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
 class Book(BaseModel):
     id: str
     title: str
-    pdfURL: str
-    thumbnailURL: str
+    pdfUrl: str
+    thumbnailUrl: str
     category: str
     uploadedAt: str | None = None
 
@@ -84,8 +84,8 @@ def get_books(request: Request):  #  Request を受け取る
                     {
                         "id": book_id,
                         "title": row.get("title", ""),
-                        "pdfURL": pdf_url,
-                        "thumbnailURL": thumbnail_url,
+                        "pdfUrl": pdf_url,
+                        "thumbnailUrl": thumbnail_url,
                         "category": row.get("category", ""),
                         "uploadedAt": row.get("uploaded_at"),
                     }
