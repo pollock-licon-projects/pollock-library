@@ -9,8 +9,8 @@ from pydantic import BaseModel
 # FastAPIのインスタンス作成
 app = FastAPI()
 
-# URLの「/app/app/Data」を、実際のフォルダ「app/Data」に結び付ける設定
-app.mount("/app/app/Data", StaticFiles(directory="app/Data"), name="data")
+# # URLの「/app/app/Data」を、実際のフォルダ「app/Data」に結び付ける設定
+# app.mount("/app/app/Data", StaticFiles(directory="app/Data"), name="data")
 
 
 # データの型定義 (Pydanticモデル)
