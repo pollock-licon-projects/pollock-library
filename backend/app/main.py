@@ -71,14 +71,12 @@ def get_books(request: Request):  #  Request を受け取る
             reader = csv.DictReader(f)
             books = []
 
-            # DATA_DIR のパス文字列から先頭のスラッシュを除去（または DATA_DIR.name 等を使用）
-            dir_path = str(DATA_DIR).lstrip("/")
-
             for row in reader:
                 raw_id = row.get("id", "0")
                 book_id = str(int(raw_id)).zfill(3) if raw_id and raw_id.isdigit() else "000"
-                pdf_url = f"{base_url}/{dir_path}/{book_id}.pdf"
-                thumbnail_url = f"{base_url}/{dir_path}/{book_id}.jpg"
+
+                pdf_url = f"{base_url}/data/{book_id}.pdf"
+                thumbnail_url = f"{base_url}/data/{book_id}.jpg"
 
                 books.append(
                     {
