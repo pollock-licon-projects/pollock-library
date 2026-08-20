@@ -4,10 +4,21 @@ from typing import List
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # FastAPIのインスタンス作成
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://pollock-library-rho.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # # URLの「/app/app/Data」を、実際のフォルダ「app/Data」に結び付ける設定
 # app.mount("/app/app/Data", StaticFiles(directory="app/Data"), name="data")
