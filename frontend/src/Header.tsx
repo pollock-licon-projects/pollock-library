@@ -11,15 +11,25 @@ export const Header: React.FC<HeaderProps> = ({
     return (
         <header
             style={{
-                backgroundImage: 'url("/header_background.png")',
-                backgroundSize: 'cover',
+                backgroundImage: 'url("/header_background.jpeg")',
+                // backgroundSize: 'cover',
+                // backgroundPosition: 'center',
+                // height: isMobile ? '70px' : '80px',
+                position: 'relative',
+                backgroundColor: '#ffffff',
+                backgroundSize: '100% 100%',
+                backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
-                height: isMobile ? '70px' : '80px',
+                // aspectRatio: '10 / 1',
+                // aspectRatio: '2560 / 465',
                 display: 'flex',
-                alignItems: 'center',
+                // alignItems: 'center',
+                // justifyContent: 'space-between',
+                // padding: isMobile ? '0 16px' : '0 30px',
+                // color: '#ffffff',
+                alignItems: 'flex-start',
                 justifyContent: 'space-between',
-                padding: isMobile ? '0 16px' : '0 30px',
-                color: '#ffffff',
+                padding: isMobile ? '8px 16px' : '12px 30px',
                 boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
                 flexShrink: 0,
             }}
@@ -28,14 +38,16 @@ export const Header: React.FC<HeaderProps> = ({
             <h1
                 style={{
                     margin: 0,
-                    fontSize: isMobile ? '22px' : '32px',
-                    color: '#ffffff',
+                    // fontSize: isMobile ? '22px' : '32px',
+                    // color: '#ffffff',
+                    fontSize: isMobile ? '20px' : '32px',
+                    color: '#7a4a2b',
                     fontWeight: 'bold',
                     letterSpacing: '2px',
-                    textShadow: '0 2px 4px rgba(0,0,0,0.6)',
+                    // textShadow: '0 2px 4px rgba(0,0,0,0.6)',
                 }}
             >
-                ポロック図書館
+                ポロックグループ図書館
             </h1>
 
             {/* 右側のアクションエリア */}
@@ -90,7 +102,7 @@ export const Header: React.FC<HeaderProps> = ({
                         /* 通常時の管理者ログイン呼び出しボタン */
                         <button
                             onClick={onOpenAdminModal}
-                            style={{ ...styles.button, backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
+                            style={{ ...styles.button, backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
                         >
                             🔒 管理者モード
                         </button>
@@ -103,8 +115,10 @@ export const Header: React.FC<HeaderProps> = ({
 
 const styles: { [key: string]: React.CSSProperties } = {
     button: {
-        color: '#ffffff',
-        border: '1px solid rgba(255, 255, 255, 0.4)',
+        // color: '#ffffff',
+        // border: '1px solid rgba(255, 255, 255, 0.4)',
+        color: '#7a4a2b',
+        border: '1px solid rgba(122, 74, 43, 0.4)',
         borderRadius: '6px',
         padding: '6px 12px',
         fontSize: '0.875rem',
